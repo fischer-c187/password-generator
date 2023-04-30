@@ -1,0 +1,19 @@
+:root {
+  --text-color: #E6E5EA;
+  --background-color: #18171F;
+  --form-background-color: #24232C;
+  --title-color: #817D92;
+  --text-green-color: #A4FFAF;
+  --too-weak-color: #F64A4A;
+  --weak-color: #FB7C58;
+  --medium-color: #F8CD65;
+  --strong-color: #A4FFAF;
+
+  --base-font-size: 16px;
+  --base-font-familly: 'JetBrains Mono', monospace;
+  --base-font-weight: 700;
+  --main-title-font-size: 1rem;
+  --password-font-size: 1.5rem;
+
+  --wrapper-width: clamp(345px, 92%, 540px);
+}

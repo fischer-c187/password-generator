@@ -1,0 +1,59 @@
+.setting {
+  padding: 1em;
+  background-color: var(--form-background-color);
+  margin-top: 1em;
+
+  &__length {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &-value {
+      color: var(--text-green-color);
+      font-size: 1.5em;
+    }
+  }
+
+  &__include {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    font-size: 1rem;
+  }
+
+  &__option {
+    display: flex;
+    gap: 1.25rem;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  &__checked-option {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--text-color);
+
+    &:hover {
+      border-color: var(--text-green-color);
+      cursor: pointer;
+    }
+
+    &:checked {
+      background: url('/src/assets/images/icon-check.svg')no-repeat center, var(--text-green-color);
+      border: none;
+    }
+  }
+
+  &__strength {
+    background-color: var(--background-color);
+    width: 100%;
+    margin-top: 2em;
+  }
+
+  &__submit {
+    width: 100%;
+    margin-top: 1rem;
+  }
+}

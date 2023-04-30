@@ -1,0 +1,18 @@
+.submit-button {
+  background-color: var(--text-green-color);
+  padding: 1rem;
+  color: var(--form-background-color);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  &:hover {
+    cursor: pointer;
+    color: var(--text-green-color);
+    background-color: var(--form-background-color);
+    fill: var(--text-green-color);
+    outline: 2px solid var(--text-green-color);
+  }
+}

@@ -26,5 +26,25 @@
     height: 28px;
     width: 10px;
     border: 2px solid var(--text-color);
+
+    &--too-weak {
+      background-color: var(--too-weak-color);
+      border-color: var(--too-weak-color);
+    }
+
+    &--weak {
+      background-color: var(--weak-color);
+      border-color: var(--weak-color);
+    }
+
+    &--medium {
+      background-color: var(--medium-color);
+      border-color: var(--medium-color);
+    }
+
+    &--strong {
+      background-color: var(--strong-color);
+      border-color: var(--strong-color);
+    }
   }
 }

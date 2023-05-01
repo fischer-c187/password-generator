@@ -1,6 +1,7 @@
 type RegexElement = {
   element: HTMLInputElement;
   condition: RegExp;
+  value: number;
 };
 type passwordMatch = {
   symbols: RegexElement;
@@ -15,24 +16,28 @@ const GENERATE_PASSWORD: passwordMatch = {
       '.setting__checked-option'
     )[3] as HTMLInputElement,
     condition: new RegExp('\\W'),
+    value: 1,
   },
   uppercase: {
     element: document.querySelectorAll(
       '.setting__checked-option'
     )[0] as HTMLInputElement,
     condition: new RegExp('[A-Z]'),
+    value: 0.5,
   },
   lowercase: {
     element: document.querySelectorAll(
       '.setting__checked-option'
     )[1] as HTMLInputElement,
     condition: new RegExp('[a-z]'),
+    value: 0.5,
   },
   digit: {
     element: document.querySelectorAll(
       '.setting__checked-option'
     )[2] as HTMLInputElement,
     condition: new RegExp('\\d'),
+    value: 1,
   },
 };
 const CHARACTERS: string[] = [];
@@ -74,7 +79,7 @@ function setProgressColorInRange(): void {
   }
 }
 
-function setValueRange() {
+function setValueRange(): void {
   const range: HTMLInputElement | null = document.querySelector('.green-range');
   const value: string = range ? range.value : '';
   const rangeDisplayValue: HTMLElement | null = document.querySelector(
@@ -86,13 +91,14 @@ function setValueRange() {
 }
 function generateValidCharsArray(): string[] {
   let result: string[] = [];
-  for (let value of Object.values(GENERATE_PASSWORD)) {
-    if (value.element.checked) {
-      result = result.concat(
-        CHARACTERS.filter((char) => value.condition.test(char))
-      );
-    }
-  }
+  Object.values(GENERATE_PASSWORD)
+    .forEach(value => {
+      if (value.element.checked) {
+        result = result.concat(
+          CHARACTERS.filter((char) => value.condition.test(char))
+        );
+      }
+    })
   return result;
 }
 
@@ -105,31 +111,97 @@ function generateRandomPassword(size: number, characters: string[]): string {
     .map(() => characters[Math.floor(Math.random() * characters.length)])
     .join('');
 }
-// TODO: peut etre passe les selecteurs au fonction pour rendre celle ci plus generique
+
+function evaluateStrengthPassword(password: string): number {
+  if(!password.length) {
+    return 0;
+  }
+  let result: number = password.length >= 10 ? 1 : 0;
+  Object.values(GENERATE_PASSWORD)
+    .forEach(obj => {
+      if (obj.condition.test(password)) {
+        result += obj.value;
+      }
+    })
+  return result;
+}
+
+function resetStrengthIcon(): void {
+  const text: HTMLElement | null = document.querySelector('.strength__text')
+  if(text){
+    text.innerHTML = ''
+  }
+  document.querySelectorAll('.strength__icon')
+    .forEach(element => {
+      element.setAttribute('class', 'strength__icon');
+    })
+}
+
+function displayStrengthPassword(numberColoredBar: number): void {
+  resetStrengthIcon();
+  const text: HTMLElement | null = document.querySelector('.strength__text')
+  if(!text) {
+    throw new Error('Error: element \'.stength__text\' does not exist')
+  }
+  const barColor: HTMLElement[] = Array.from(document.querySelectorAll('.strength__icon'))
+  let classIcon: string = 'strength__icon';
+
+  if(numberColoredBar === 0) {
+    text.innerHTML = '';
+  } else if (numberColoredBar >= 4){
+    text.innerHTML = 'strong';
+    classIcon = 'strength__icon--strong'
+  } else if (numberColoredBar >= 3){
+    text.innerHTML = 'medium';
+    classIcon = 'strength__icon--medium'
+  } else if (numberColoredBar >= 2){
+    text.innerHTML = 'weak';
+    classIcon = 'strength__icon--weak'
+  } else if (numberColoredBar >= 0){
+    text.innerHTML = 'too weak';
+    classIcon = 'strength__icon--too-weak'
+  }
+
+  const nbr: number = numberColoredBar === 1.5 ? 1 : numberColoredBar;
+  for(let i=0; i<nbr; i++){
+    barColor[i].classList.add(classIcon);
+  }
+}
+
+
 function main(): void {
-  const rangeElement: HTMLInputElement | null = document.querySelector('.green-range')
-  const passwordElement: HTMLElement | null = document.querySelector('.password__text')
-  document
-    .querySelector('.password__copy-icon')
+  const rangeElement: HTMLInputElement | null = document.querySelector('.green-range');
+  const passwordElement: HTMLElement | null = document.querySelector('.password__text');
+
+  if(!rangeElement) {
+    throw new Error('Error: element \'.green-range\' does not exist')
+  }
+  if(!passwordElement) {
+    throw new Error('Error: element \'.password__text\' does not exist')
+  }
+  document.querySelector('.password__copy-icon')
     ?.addEventListener('click', () => {
       copyPasswordToClipBoard();
       animationSuccesMessage();
     });
+
   setProgressColorInRange();
   setValueRange();
-  rangeElement?.addEventListener('input', () => {
+  rangeElement.addEventListener('input', () => {
     setProgressColorInRange();
     setValueRange();
   });
-  console.log(generateRandomPassword(10, generateValidCharsArray()));
-  document
-    .querySelector('.setting__submit')
+
+  document.querySelector('.setting__submit')
     ?.addEventListener('click', (event) => {
       event.preventDefault();
       const size: number = rangeElement ? Number(rangeElement.value) : 0;
-      if(passwordElement){
-        passwordElement.innerText = generateRandomPassword(size, generateValidCharsArray())
-      }
+      
+      passwordElement.innerText = generateRandomPassword(
+        size,
+        generateValidCharsArray()
+      );
+      displayStrengthPassword(evaluateStrengthPassword(passwordElement.innerText));
       
     });
 }

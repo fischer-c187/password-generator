@@ -16,4 +16,9 @@
   --password-font-size: 1.5rem;
 
   --wrapper-width: clamp(345px, 92%, 540px);
+
+  @media screen and (width >= 768px) {
+    --main-title-font-size: 1.5rem;
+    --password-font-size: 2rem;
+  }
 }
